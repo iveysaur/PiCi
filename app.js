@@ -8,6 +8,8 @@ app.set('views', __dirname + '/pages');
 app.set('view cache', false);
 swig.setDefaults({ cache: false });
 
+app.use(express.static(__dirname + '/public'));
+
 app.get('/', function(req, res){
 	res.render('index', { 'foo': 'hi' });
 });
