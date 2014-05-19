@@ -1,0 +1,33 @@
+body{
+	font-family: Verdana;
+	font-size: 13px;
+	color: #111;
+	background-color: #eee;
+}
+
+h1{
+	text-align: center;
+}
+
+p{
+	margin-left: 5px;
+}
+
+#container{
+	width: 800px;
+	border: 1px solid #111;
+	background-color: #fafafa;
+	padding: 5px;
+	min-height: 500px;
+	margin: 30px auto;
+}
+
+code{
+	background-color: #333;
+	color: #fafafa;
+	display: block;
+	width: 780px;
+	padding: 5px;
+	margin: auto;
+}
+
