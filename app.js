@@ -25,7 +25,7 @@ app.post('/hook', function(req, res) {
 			'path': '/repos/' + config.repoURL + '/status/' + req.body.after + '?access_token=' + config.githubToken,
 			'method': 'POST'}, function(res) {
 				res.on('data', function(data) {
-					console.log(data);
+					console.log(data.toString());
 				});
 			});
 		request.write(JSON.stringify({ 'state': 'pending' }));
