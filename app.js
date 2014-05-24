@@ -34,7 +34,7 @@ app.post('/hook', function(req, res) {
 							cmd(n + 1);
 						}
 						else {
-							sendStatus(req.body.after, 'passed', 'PiCi: All commands passed.');
+							sendStatus(req.body.after, 'success', 'PiCi: All commands passed.');
 						}
 					}
 					else {
