@@ -23,7 +23,11 @@ app.post('/hook', function(req, res) {
 		console.log("checking: " + req.body.after);
 		var request = https.request({ 'host': 'api.github.com', 
 			'path': '/repos/' + config.repoURL + '/status/' + req.body.after + '?access_token=' + config.githubToken,
-			'method': 'POST'});
+			'method': 'POST'}, function(res) {
+				res.on('data', function(data) {
+					console.log(data);
+				});
+			});
 		request.write(JSON.stringify({ 'state': 'pending' }));
 		request.end();
 	}
