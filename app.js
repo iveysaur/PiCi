@@ -20,7 +20,7 @@ app.use(bodyParser());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 app.get('/', function(req, res) {
-	res.render('index', { 'currentStatus': currentStatus, 'lastUpdated': lastUpdated, 'rawOutput': rawOutput });
+	res.render('index', { 'currentStatus': currentStatus, 'lastUpdated': lastUpdated.toString(), 'rawOutput': rawOutput });
 });
 
 app.post('/hook', function(req, res) {
