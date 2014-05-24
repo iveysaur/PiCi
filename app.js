@@ -1,5 +1,6 @@
 var express = require('express'), app = express(), swig = require('swig');
 var bodyParser = require('body-parser');
+var https = require('https'), config = require('./config');
 
 app.engine('html', swig.renderFile);
 
@@ -13,12 +14,19 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
 	res.render('index', { 'foo': 'hi' });
 });
 
-app.post('/hook', function(req, res){
-	console.log(req.body);
+app.post('/hook', function(req, res) {
+	if (req.body && req.body.after) {
+		console.log("checking: " + req.body.after);
+		var request = https.request({ 'host': 'api.github.com', 
+			'path': '/repos/' + config.repoURL + '/status/' + req.body.after,
+			'method': 'POST'});
+		request.write(JSON.stringify({ 'state': 'pending' }));
+		request.end();
+	}
 	res.end();
 });
 
