@@ -1,6 +1,6 @@
-{
-	"test_commands": [],
-	"build_commands": [],
-	"deploy_commands": []
-}
+[
+	{"name": "build", "commands": []},
+	{"name": "test", "commands": []},
+	{"name": "deploy", "commands": []}
+]
 
