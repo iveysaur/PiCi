@@ -1,4 +1,5 @@
 var express = require('express'), app = express(), swig = require('swig');
+var bodyParser = require('body-parser');
 
 app.engine('html', swig.renderFile);
 
@@ -9,9 +10,16 @@ app.set('view cache', false);
 swig.setDefaults({ cache: false });
 
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser());
+app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 app.get('/', function(req, res){
 	res.render('index', { 'foo': 'hi' });
+});
+
+app.post('/hook', function(req, res){
+	console.log(req.body);
+	res.end();
 });
 
 app.listen(2345);
