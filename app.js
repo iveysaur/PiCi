@@ -1,6 +1,7 @@
 var express = require('express'), app = express(), swig = require('swig');
 var bodyParser = require('body-parser');
 var https = require('https'), config = require('./config');
+var exec = require('child_process').exec, child;
 
 app.engine('html', swig.renderFile);
 
@@ -31,6 +32,26 @@ app.post('/hook', function(req, res) {
 			});
 		request.write(JSON.stringify({ 'state': 'pending' }));
 		request.end();
+		var i = 0;
+		var cmd = function(n) { 
+			var inner = function(c) {
+				child = exec(config.tasks[n].commands[c], function(error, stdout, stderr) {
+					if (error == null) {
+						if ((c + 1) < config.tasks[n].commands.length) {
+							inner(c + 1);
+						}
+						else {
+							cmd(n + 1);
+						}
+					}
+					else {
+						console.log(error);
+					}
+				});
+			}
+			inner(n);
+		};
+		cmd(0);
 	}
 	console.log(req.body);
 	res.end();
