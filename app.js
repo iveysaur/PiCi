@@ -32,6 +32,7 @@ app.post('/hook', function(req, res) {
 		request.write(JSON.stringify({ 'state': 'pending' }));
 		request.end();
 	}
+	console.log(req.body);
 	res.end();
 });
 
