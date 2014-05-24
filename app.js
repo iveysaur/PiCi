@@ -22,16 +22,7 @@ app.get('/', function(req, res) {
 app.post('/hook', function(req, res) {
 	if (req.body && (req.body.after || req.body.pull_request && (req.body.after = req.body.pull_request.head.sha))) {
 		console.log("checking: " + req.body.after);
-		var request = https.request({ 'host': 'api.github.com', 
-			'path': '/repos/' + config.repoURL + '/statuses/' + req.body.after + '?access_token=' + config.githubToken,
-			'method': 'POST',
-			'headers': { 'User-Agent': 'PiCi' }}, function(res) {
-				res.on('data', function(data) {
-					console.log(data.toString());
-				});
-			});
-		request.write(JSON.stringify({ 'state': 'pending' }));
-		request.end();
+		sendStatus(req.body.after, 'pending');
 		var i = 0;
 		var cmd = function(n) { 
 			var inner = function(c) {
@@ -40,12 +31,16 @@ app.post('/hook', function(req, res) {
 						if ((c + 1) < config.tasks[n].commands.length) {
 							inner(c + 1);
 						}
-						else {
+						else if ((n + 1) < config.tasks.length) {
 							cmd(n + 1);
+						}
+						else {
+							sendStatus(req.body.after, 'passed');
 						}
 					}
 					else {
 						console.log(error);
+						sendStatus(req.body.after, 'failed');
 					}
 				});
 			}
@@ -56,6 +51,19 @@ app.post('/hook', function(req, res) {
 	console.log(req.body);
 	res.end();
 });
+
+function sendStatus(sha, state) {
+	var request = https.request({ 'host': 'api.github.com', 
+		'path': '/repos/' + config.repoURL + '/statuses/' + sha + '?access_token=' + config.githubToken,
+		'method': 'POST',
+		'headers': { 'User-Agent': 'PiCi' }}, function(res) {
+			res.on('data', function(data) {
+				console.log(data.toString());
+			});
+		});
+	request.write(JSON.stringify({ 'state': state }));
+	request.end();
+}
 
 app.listen(2345);
 
