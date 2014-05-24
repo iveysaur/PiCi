@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var swig = require('swig');
 var exec = require('child_process').exec;
 var app = express();
-var currentStatus, lastUpdated, rawOutput;
+var currentStatus = '', lastUpdated = '', rawOutput = '';
 
 app.engine('html', swig.renderFile);
 
