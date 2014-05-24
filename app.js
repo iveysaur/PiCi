@@ -1,6 +1,10 @@
-var express = require('express'), app = express(), swig = require('swig');
+var express = require('express');
+var swig = require('swig');
 var bodyParser = require('body-parser');
-var https = require('https'), config = require('./config');
+var https = require('https');
+var config = require('./config');
+
+app = express();
 
 app.engine('html', swig.renderFile);
 
