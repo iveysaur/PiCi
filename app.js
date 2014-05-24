@@ -1,7 +1,10 @@
-var express = require('express'), app = express(), swig = require('swig');
+var config = require('./config');
+var https = require('https');
+var express = require('express');
 var bodyParser = require('body-parser');
-var https = require('https'), config = require('./config');
-var exec = require('child_process').exec, child;
+var swig = require('swig');
+var exec = require('child_process').exec;
+var app = express();
 
 app.engine('html', swig.renderFile);
 
@@ -25,24 +28,21 @@ app.post('/hook', function(req, res) {
 		sendStatus(req.body.after, 'pending', 'PiCi: Running commands.');
 		var cmd = function(n) { 
 			var inner = function(c) {
-				child = exec(config.tasks[n].commands[c], function(error, stdout, stderr) {
+				exec(config.tasks[n].commands[c], function(error, stdout, stderr) {
 					if (error == null) {
-						if ((c + 1) < config.tasks[n].commands.length) {
+						if (c < config.tasks[n].commands.length - 1)
 							inner(c + 1);
-						}
-						else if ((n + 1) < config.tasks.length) {
+						else if (n < config.tasks.length - 1)
 							cmd(n + 1);
-						}
-						else {
+						else
 							sendStatus(req.body.after, 'success', 'PiCi: All commands passed.');
-						}
 					}
 					else {
 						console.log(error);
 						sendStatus(req.body.after, 'failure', 'PiCi: ' + error.toString());
 					}
 				});
-			}
+			};
 			inner(0);
 		};
 		cmd(0);
