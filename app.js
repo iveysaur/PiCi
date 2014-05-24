@@ -22,7 +22,7 @@ app.get('/', function(req, res) {
 app.post('/hook', function(req, res) {
 	if (req.body && (req.body.after || req.body.pull_request && (req.body.after = req.body.pull_request.head.sha))) {
 		console.log("checking: " + req.body.after);
-		sendStatus(req.body.after, 'pending');
+		sendStatus(req.body.after, 'pending', 'PiCi: Running commands.');
 		var i = 0;
 		var cmd = function(n) { 
 			var inner = function(c) {
@@ -35,12 +35,12 @@ app.post('/hook', function(req, res) {
 							cmd(n + 1);
 						}
 						else {
-							sendStatus(req.body.after, 'passed');
+							sendStatus(req.body.after, 'passed', 'PiCi: All commands passed.');
 						}
 					}
 					else {
 						console.log(error);
-						sendStatus(req.body.after, 'failure');
+						sendStatus(req.body.after, 'failure', 'PiCi: ' + error.toString());
 					}
 				});
 			}
@@ -52,7 +52,7 @@ app.post('/hook', function(req, res) {
 	res.end();
 });
 
-function sendStatus(sha, state) {
+function sendStatus(sha, state, message) {
 	var request = https.request({ 'host': 'api.github.com', 
 		'path': '/repos/' + config.repoURL + '/statuses/' + sha + '?access_token=' + config.githubToken,
 		'method': 'POST',
@@ -61,7 +61,7 @@ function sendStatus(sha, state) {
 				console.log(data.toString());
 			});
 		});
-	request.write(JSON.stringify({ 'state': state }));
+	request.write(JSON.stringify({ 'state': state, 'description': message || '' }));
 	request.end();
 }
 
