@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/hook', function(req, res) {
-	if (req.body && req.body.after) {
+	if (req.body && (req.body.after || req.body.pull_request && (req.body.after = req.body.pull_request.head.sha))) {
 		console.log("checking: " + req.body.after);
 		var request = https.request({ 'host': 'api.github.com', 
 			'path': '/repos/' + config.repoURL + '/statuses/' + req.body.after + '?access_token=' + config.githubToken,
