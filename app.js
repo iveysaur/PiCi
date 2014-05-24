@@ -23,7 +23,8 @@ app.post('/hook', function(req, res) {
 		console.log("checking: " + req.body.after);
 		var request = https.request({ 'host': 'api.github.com', 
 			'path': '/repos/' + config.repoURL + '/status/' + req.body.after + '?access_token=' + config.githubToken,
-			'method': 'POST'}, function(res) {
+			'method': 'POST',
+			'headers': { 'User-Agent': 'PiCi' }}, function(res) {
 				res.on('data', function(data) {
 					console.log(data.toString());
 				});
