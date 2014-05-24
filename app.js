@@ -40,7 +40,7 @@ app.post('/hook', function(req, res) {
 					}
 					else {
 						console.log(error);
-						sendStatus(req.body.after, 'failed');
+						sendStatus(req.body.after, 'failure');
 					}
 				});
 			}
