@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var swig = require('swig');
 var exec = require('child_process').exec;
 var app = express();
+var currentStatus, lastUpdated, rawOutput;
 
 app.engine('html', swig.renderFile);
 
@@ -19,12 +20,13 @@ app.use(bodyParser());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 app.get('/', function(req, res) {
-	res.render('index', { 'foo': 'hi' });
+	res.render('index', { 'currentStatus': currentStatus, 'lastUpdated': lastUpdated, 'rawOutput': rawOutput });
 });
 
 app.post('/hook', function(req, res) {
 	if (req.body && (req.body.after || req.body.pull_request && (req.body.after = req.body.pull_request.head.sha))) {
 		console.log("checking: " + req.body.after);
+		rawrOutput = '';
 		sendStatus(req.body.after, 'pending', 'PiCi: Running commands.');
 		var cmd = function(n) { 
 			var inner = function(c) {
@@ -41,6 +43,7 @@ app.post('/hook', function(req, res) {
 						console.log(error);
 						sendStatus(req.body.after, 'failure', 'PiCi: ' + error.toString());
 					}
+					rawOutput += stdout + stderr;
 				});
 			};
 			inner(0);
@@ -62,6 +65,8 @@ function sendStatus(sha, state, message) {
 		});
 	request.write(JSON.stringify({ 'state': state, 'description': message || '' }));
 	request.end();
+	currentStatus = state;
+	lastUpdated = new Date();
 }
 
 app.listen(2345);
