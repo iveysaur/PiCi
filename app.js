@@ -23,7 +23,6 @@ app.post('/hook', function(req, res) {
 	if (req.body && (req.body.after || req.body.pull_request && (req.body.after = req.body.pull_request.head.sha))) {
 		console.log("checking: " + req.body.after);
 		sendStatus(req.body.after, 'pending', 'PiCi: Running commands.');
-		var i = 0;
 		var cmd = function(n) { 
 			var inner = function(c) {
 				child = exec(config.tasks[n].commands[c], function(error, stdout, stderr) {
@@ -44,7 +43,7 @@ app.post('/hook', function(req, res) {
 					}
 				});
 			}
-			inner(n);
+			inner(0);
 		};
 		cmd(0);
 	}
