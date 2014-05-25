@@ -1,6 +1,9 @@
-[
-	{"name": "build", "commands": []},
-	{"name": "test", "commands": []},
-	{"name": "deploy", "commands": []}
-]
+{
+	"tasks": [
+		{ "name": "build", "commands": ["echo 'hi'", "echo 'bye'"] },
+		{ "name": "test", "commands": ["echo foo"] }
+	],
+	"githubToken": "",
+	"repoURL": "iveysaur/PiCi"
+}
 
